@@ -3,8 +3,8 @@
     xmlns:core="sap.ui.core"
 >
     <Dialog
-        id="addAuthorDialog"
-        title="New Author"
+        id="authorDialog"
+        title="{view>/dialogTitle}"
         draggable="true"
         resizable="true"
         contentWidth="400px"
@@ -20,20 +20,20 @@
             <TextArea
                 id="bioInput"
                 required="true"
-                growing="true"
+                width="100%"
             />
         </VBox>
 
         <beginButton>
             <Button
-                text="Create"
-                press="onCreateAuthor"
+                text="{= ${view>/dialogMode} === 'create' ? 'Create' : 'Edit'}"
+                press=".onDialogAuthorConfirm"
             />
         </beginButton>
         <endButton>
             <Button
                 text="Cancel"
-                press="onCancelAddAuthor"
+                press=".onDialogCancel"
             />
         </endButton>
     </Dialog>

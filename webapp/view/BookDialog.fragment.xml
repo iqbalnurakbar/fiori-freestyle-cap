@@ -2,7 +2,7 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
 >
-    <Dialog title="{= ${_bookEditMode} ? 'Edit Book' : 'Add Book'}">
+    <Dialog title="{view>/dialogTitle}">
         <VBox class="sapUiSmallMargin">
             <Input
                 id="titleInput"
@@ -11,7 +11,7 @@
             <TextArea
                 id="descrInput"
                 placeholder="Description"
-                rows="4"
+                width="100%"
             />
             <Input
                 id="stockInput"
@@ -30,14 +30,14 @@
         </VBox>
         <beginButton>
             <Button
-                text="{= ${_bookEditMode} ? 'Save' : 'Create'}"
-                press=".onCreateBook"
+                text="{= ${view>/dialogMode} === 'create' ? 'Create' : 'Edit'}"
+                press=".onDialogBookConfirm"
             />
         </beginButton>
         <endButton>
             <Button
                 text="Cancel"
-                press=".onCancelAddBook"
+                press=".onDialogCancel"
             />
         </endButton>
     </Dialog>

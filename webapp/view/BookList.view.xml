@@ -4,10 +4,7 @@
     xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc"
 >
-    <SplitApp
-        id="splitApp"
-        backgroundImage=""
-    >
+    <SplitApp id="splitApp">
         <!-- MASTER: Authors List -->
         <masterPages>
             <Page title="Dashboard">
@@ -15,6 +12,7 @@
                     <Toolbar>
                         <Title text="Authors" />
                         <ToolbarSpacer />
+
                         <Button
                             icon="sap-icon://add"
                             tooltip="Add Author"
@@ -25,42 +23,37 @@
                             icon="sap-icon://edit"
                             tooltip="Edit Selected Author"
                             press=".onEditAuthor"
-                            enabled="false"
+                            enabled="{view>/authorSelected}"
                         />
                         <Button
                             id="deleteAuthorBtn"
                             icon="sap-icon://delete"
                             tooltip="Delete Selected Author"
-                            press=".onDeleteAuthor"
                             type="Reject"
-                            enabled="false"
+                            press=".onDeleteAuthor"
+                            enabled="{view>/authorSelected}"
                         />
                     </Toolbar>
                 </subHeader>
 
-                <content>
-                    <!-- List of authors -->
-                    <List
-                        id="authorList"
-                        mode="SingleSelectMaster"
-                        items="{ path: '/Authors',
+                <List
+                    id="authorList"
+                    mode="SingleSelectMaster"
+                    items="{ path: '/Authors',
                                  parameters: {
                                     $select: 'ID,name,bio,isDeleted',
                                     $filter: 'isDeleted eq false'
                                  } 
                                 }"
-                        itemPress=".onAuthorSelect"
-                        selectionChange=".onAuthorSelectionChange"
-                    >
-                        <items>
-                            <StandardListItem
-                                title="{name}"
-                                description="{bio}"
-                                type="Active"
-                            />
-                        </items>
-                    </List>
-                </content>
+                    itemPress=".onAuthorSelect"
+                    selectionChange=".onAuthorSelect"
+                >
+                    <StandardListItem
+                        title="{name}"
+                        description="{bio}"
+                        type="Active"
+                    />
+                </List>
             </Page>
         </masterPages>
 
@@ -68,62 +61,50 @@
         <detailPages>
             <Page
                 id="detailPage"
-                title="Books by {view>/selectedAuthorName}"
-                showNavButton="true"
-                navButtonPress="onNavBack"
+                title="{= 'Books by ' + ${authorList>/selectedContexts/0/parameters/listItem/name} }"
             >
                 <subHeader>
                     <Toolbar>
-                        <Title
-                            text="Books"
-                            level="H2"
-                        />
+                        <Title text="Books" />
                         <ToolbarSpacer />
+
                         <Button
                             id="addBookBtn"
                             icon="sap-icon://add"
                             tooltip="Add Book"
                             press=".onAddBook"
-                            enabled="{= !!${view>/selectedAuthorName} }"
+                            enabled="{view>/bookSelected}"
                         />
                         <Button
                             id="editBookBtn"
                             icon="sap-icon://edit"
                             tooltip="Edit Selected Book"
                             press=".onEditBook"
-                            enabled="false"
+                            enabled="{view>/bookSelected}"
                         />
                         <Button
                             id="deleteBookBtn"
                             icon="sap-icon://delete"
                             tooltip="Delete Selected Book"
-                            press=".onDeleteBook"
                             type="Reject"
-                            enabled="false"
+                            press=".onDeleteBook"
+                            enabled="{view>/bookSelected}"
                         />
                     </Toolbar>
                 </subHeader>
+
                 <Table
                     id="booksTable"
                     inset="false"
-                    items="{
-                        path: 'view>/selectedAuthorBooks'
-                    }"
                     growing="true"
                     growingThreshold="10"
-                    selectionChange=".onBookSelectionChange"
                     mode="SingleSelectMaster"
+                    selectionChange=".onBookSelectionChange"
                 >
                     <headerToolbar>
                         <Toolbar>
                             <Title
-                                text="Books by {view>/selectedAuthorName}"
-                                level="H2"
-                            />
-                            <ToolbarSpacer />
-                            <Label text="Total Books:" />
-                            <Text
-                                text="{= ${view>/selectedAuthorBooks}.length }"
+                                text="{= 'Total Books: ' + ${booksTable>/items}.length }"
                             />
                         </Toolbar>
                     </headerToolbar>
@@ -136,45 +117,29 @@
                             <Text text="Description" />
                         </Column>
                         <Column
-                            width="10%"
-                            hAlign="End"
+                            width="15%"
+                            hAlign="Center"
                         >
                             <Text text="Stock" />
                         </Column>
                         <Column
-                            width="15%"
-                            hAlign="End"
+                            width="25%"
+                            hAlign="Center"
                         >
                             <Text text="Price" />
-                        </Column>
-                        <Column width="15%">
-                            <Text text="Currency" />
                         </Column>
                     </columns>
 
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{view>title}" />
-                                <Text text="{view>descr}" />
+                                <Text text="{title}" />
+                                <Text text="{descr}" />
+                                <ObjectNumber number="{stock}" />
                                 <ObjectNumber
-                                    number="{view>stock}"
-                                    state="{
-                                        path: 'view>stock',
-                                        formatter: '.formatStockState'
-                                    }"
+                                    number="{price}"
+                                    unit="{currency_code}"
                                 />
-                                <ObjectNumber
-                                    number="{
-                                        parts: ['view>price', 'view>currency'],
-                                        type: 'sap.ui.model.type.Currency',
-                                        formatOptions: {
-                                            showMeasure: false
-                                        }
-                                    }"
-                                    unit="{view>currency}"
-                                />
-                                <Text text="{view>currency}" />
                             </cells>
                         </ColumnListItem>
                     </items>
