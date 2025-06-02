@@ -1,0 +1,185 @@
+<mvc:View
+    controllerName="fiori.research.controller.BookList"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+>
+    <SplitApp
+        id="splitApp"
+        backgroundImage=""
+    >
+        <!-- MASTER: Authors List -->
+        <masterPages>
+            <Page title="Dashboard">
+                <subHeader>
+                    <Toolbar>
+                        <Title text="Authors" />
+                        <ToolbarSpacer />
+                        <Button
+                            icon="sap-icon://add"
+                            tooltip="Add Author"
+                            press=".onAddAuthor"
+                        />
+                        <Button
+                            id="editAuthorBtn"
+                            icon="sap-icon://edit"
+                            tooltip="Edit Selected Author"
+                            press=".onEditAuthor"
+                            enabled="false"
+                        />
+                        <Button
+                            id="deleteAuthorBtn"
+                            icon="sap-icon://delete"
+                            tooltip="Delete Selected Author"
+                            press=".onDeleteAuthor"
+                            type="Reject"
+                            enabled="false"
+                        />
+                    </Toolbar>
+                </subHeader>
+
+                <content>
+                    <!-- List of authors -->
+                    <List
+                        id="authorList"
+                        mode="SingleSelectMaster"
+                        items="{ path: '/Authors',
+                                 parameters: {
+                                    $select: 'ID,name,bio,isDeleted',
+                                    $filter: 'isDeleted eq false'
+                                 } 
+                                }"
+                        itemPress=".onAuthorSelect"
+                        selectionChange=".onAuthorSelectionChange"
+                    >
+                        <items>
+                            <StandardListItem
+                                title="{name}"
+                                description="{bio}"
+                                type="Active"
+                            />
+                        </items>
+                    </List>
+                </content>
+            </Page>
+        </masterPages>
+
+        <!-- x: Books Table -->
+        <detailPages>
+            <Page
+                id="detailPage"
+                title="Books by {view>/selectedAuthorName}"
+                showNavButton="true"
+                navButtonPress="onNavBack"
+            >
+                <subHeader>
+                    <Toolbar>
+                        <Title
+                            text="Books"
+                            level="H2"
+                        />
+                        <ToolbarSpacer />
+                        <Button
+                            id="addBookBtn"
+                            icon="sap-icon://add"
+                            tooltip="Add Book"
+                            press=".onAddBook"
+                            enabled="{= !!${view>/selectedAuthorName} }"
+                        />
+                        <Button
+                            id="editBookBtn"
+                            icon="sap-icon://edit"
+                            tooltip="Edit Selected Book"
+                            press=".onEditBook"
+                            enabled="false"
+                        />
+                        <Button
+                            id="deleteBookBtn"
+                            icon="sap-icon://delete"
+                            tooltip="Delete Selected Book"
+                            press=".onDeleteBook"
+                            type="Reject"
+                            enabled="false"
+                        />
+                    </Toolbar>
+                </subHeader>
+                <Table
+                    id="booksTable"
+                    inset="false"
+                    items="{
+                        path: 'view>/selectedAuthorBooks'
+                    }"
+                    growing="true"
+                    growingThreshold="10"
+                    selectionChange=".onBookSelectionChange"
+                    mode="SingleSelectMaster"
+                >
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title
+                                text="Books by {view>/selectedAuthorName}"
+                                level="H2"
+                            />
+                            <ToolbarSpacer />
+                            <Label text="Total Books:" />
+                            <Text
+                                text="{= ${view>/selectedAuthorBooks}.length }"
+                            />
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column width="25%">
+                            <Text text="Title" />
+                        </Column>
+                        <Column width="35%">
+                            <Text text="Description" />
+                        </Column>
+                        <Column
+                            width="10%"
+                            hAlign="End"
+                        >
+                            <Text text="Stock" />
+                        </Column>
+                        <Column
+                            width="15%"
+                            hAlign="End"
+                        >
+                            <Text text="Price" />
+                        </Column>
+                        <Column width="15%">
+                            <Text text="Currency" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{view>title}" />
+                                <Text text="{view>descr}" />
+                                <ObjectNumber
+                                    number="{view>stock}"
+                                    state="{
+                                        path: 'view>stock',
+                                        formatter: '.formatStockState'
+                                    }"
+                                />
+                                <ObjectNumber
+                                    number="{
+                                        parts: ['view>price', 'view>currency'],
+                                        type: 'sap.ui.model.type.Currency',
+                                        formatOptions: {
+                                            showMeasure: false
+                                        }
+                                    }"
+                                    unit="{view>currency}"
+                                />
+                                <Text text="{view>currency}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </Page>
+        </detailPages>
+    </SplitApp>
+</mvc:View>
