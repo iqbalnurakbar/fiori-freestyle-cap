@@ -73,7 +73,7 @@
                             icon="sap-icon://add"
                             tooltip="Add Book"
                             press=".onAddBook"
-                            enabled="{view>/bookSelected}"
+                            enabled="{view>/authorSelected}"
                         />
                         <Button
                             id="editBookBtn"
@@ -101,13 +101,6 @@
                     mode="SingleSelectMaster"
                     selectionChange=".onBookSelectionChange"
                 >
-                    <headerToolbar>
-                        <Toolbar>
-                            <Title
-                                text="{= 'Total Books: ' + ${booksTable>/items}.length }"
-                            />
-                        </Toolbar>
-                    </headerToolbar>
 
                     <columns>
                         <Column width="25%">
